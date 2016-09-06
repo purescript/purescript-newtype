@@ -1,0 +1,21 @@
+{
+  "name": "purescript-newtype",
+  "homepage": "https://github.com/garyb/purescript-newtype",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/garyb/purescript-newtype.git"
+  },
+  "ignore": [
+    "**/.*",
+    "bower_components",
+    "node_modules",
+    "output",
+    "test",
+    "bower.json",
+    "package.json"
+  ],
+  "dependencies": {
+    "purescript-prelude": "^1.0.0"
+  }
+}
