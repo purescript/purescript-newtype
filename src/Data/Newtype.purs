@@ -1,4 +1,4 @@
-module Control.Newtype where
+module Data.Newtype where
 
 import Prelude
 

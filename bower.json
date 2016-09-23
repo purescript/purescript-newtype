@@ -1,10 +1,11 @@
 {
   "name": "purescript-newtype",
-  "homepage": "https://github.com/garyb/purescript-newtype",
+  "homepage": "https://github.com/purescript/purescript-newtype",
+  "description": "Type class and functions for working with newtypes",
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/garyb/purescript-newtype.git"
+    "url": "git://github.com/purescript/purescript-newtype.git"
   },
   "ignore": [
     "**/.*",
@@ -14,8 +15,5 @@
     "test",
     "bower.json",
     "package.json"
-  ],
-  "dependencies": {
-    "purescript-prelude": "^1.0.0"
-  }
+  ]
 }
