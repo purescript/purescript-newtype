@@ -2,7 +2,7 @@
 
 [![Latest release](http://img.shields.io/bower/v/purescript-newtype.svg)](https://github.com/purescript/purescript-newtype/releases)
 [![Build Status](https://travis-ci.org/purescript/purescript-newtype.svg?branch=master)](https://travis-ci.org/purescript/purescript-newtype)
-[![Dependency Status](https://www.versioneye.com/user/projects/55848c22363861001d000326/badge.svg?style=flat)](https://www.versioneye.com/user/projects/55848c22363861001d000326)
+[![Dependency Status](https://www.versioneye.com/user/projects/57e514a379806f002f4aa0eb/badge.svg?style=flat)](https://www.versioneye.com/user/projects/57e514a379806f002f4aa0eb)
 
 Type class and functions for working with newtypes.
 
