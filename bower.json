@@ -15,5 +15,8 @@
     "test",
     "bower.json",
     "package.json"
-  ]
+  ],
+  "dependencies": {
+    "purescript-prelude": "^1.1.0"
+  }
 }
