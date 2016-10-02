@@ -2,13 +2,39 @@ module Data.Newtype where
 
 import Prelude
 
+-- | A type class for `newtype`s to enable convenient wrapping and unwrapping,
+-- | and the use of the other functions in this module.
+-- |
+-- | The compiler can derive instances of `Newtype` automatically:
+-- |
+-- | ``` purescript
+-- | newtype EmailAddress = EmailAddress String
+-- |
+-- | derive instance newtypeEmailAddress :: Newtype EmailAddress _
+-- | ```
+-- |
+-- | Note that deriving for `Newtype` instances requires that the type be
+-- | defined as `newtype` rather than `data` declaration (even if the `data`
+-- | structurally fits the rules of a `newtype`), and the use of a wildcard for
+-- | the wrapped type.
 class Newtype t a | t -> a where
   wrap :: a -> t
   unwrap :: t -> a
 
+-- | Given a constructor for a `Newtype`, this returns the appropriate `unwrap`
+-- | function.
 op :: forall t a. Newtype t a => (a -> t) -> t -> a
 op _ = unwrap
 
+-- | This combinator is for when you have a higher order function that you want
+-- | to use in the context of some newtype - `foldMap` being a common example:
+-- |
+-- | ``` purescript
+-- | ala Additive foldMap [1,2,3,4] -- 10
+-- | ala Multiplicative foldMap [1,2,3,4] -- 24
+-- | ala Conj foldMap [true, false] -- false
+-- | ala Disj foldMap [true, false] -- true
+-- | ```
 ala
   :: forall f t a s b
    . (Functor f, Newtype t a, Newtype s b)
@@ -17,6 +43,17 @@ ala
   -> f a
 ala _ f = map unwrap (f wrap)
 
+-- | Similar to `ala` but useful for cases where you want to use an additional
+-- | projection with the higher order function:
+-- |
+-- | ``` purescript
+-- | alaF Additive foldMap String.length ["hello", "world"] -- 10
+-- | alaF Multiplicative foldMap Math.abs [1.0, -2.0, 3.0, -4.0] -- 24.0
+-- | ```
+-- |
+-- | The type admits other possibilities due to the polymorphic `Functor`
+-- | constraints, but the case described above works because ((->) a) is a
+-- | `Functor`.
 alaF
   :: forall f g t a s b
    . (Functor f, Functor g, Newtype t a, Newtype s b)
@@ -26,14 +63,28 @@ alaF
   -> g b
 alaF _ f = map unwrap <<< f <<< map wrap
 
-under
-  :: forall t a s b
-   . (Newtype t a, Newtype s b)
-  => (a -> t)
-  -> (t -> s)
-  -> (a -> b)
-under _ f = unwrap <<< f <<< wrap
-
+-- | Lifts a function operate over newtypes. This can be used to lift a
+-- | function to manipulate the contents of a single newtype, somewhat like
+-- | `map` does for a `Functor`:
+-- |
+-- | ``` purescript
+-- | newtype Label = Label String
+-- | derive instance newtypeLabel :: Newtype Label _
+-- |
+-- | toUpperLabel :: Label -> Label
+-- | toUpperLabel = over Label String.toUpper
+-- | ```
+-- |
+-- | But the result newtype is polymorphic, meaning the result can be returned
+-- | as an alternative newtype:
+-- |
+-- | `` purescript
+-- | newtype UppercaseLabel = UppercaseLabel String
+-- | derive instance newtypeUppercaseLabel :: Newtype UppercaseLabel _
+-- |
+-- | toUpperLabel' :: Label -> UppercaseLabel
+-- | toUpperLabel' = over Label String.toUpper
+-- | ```
 over
   :: forall t a s b
    . (Newtype t a, Newtype s b)
@@ -43,20 +94,76 @@ over
   -> s
 over _ f = wrap <<< f <<< unwrap
 
-underF
-  :: forall f t a s b
-   . (Newtype t a, Newtype s b, Functor f)
-  => (a -> t)
-  -> (f t -> f s)
-  -> f a
-  -> f b
-underF _ f = map unwrap <<< f <<< map wrap
-
+-- | Much like `over`, but where the lifted function operates on values in a
+-- | `Functor`:
+-- |
+-- | ``` purescript
+-- | findLabel :: String -> Array Label -> Maybe Label
+-- | findLabel s = overF Label (Foldable.find (_ == s))
+-- | ```
+-- |
+-- | The above example also demonstrates that the functor type is polymorphic
+-- | here too, the input is an `Array` but the result is a `Maybe`.
 overF
-  :: forall f t a s b
-   . (Newtype t a, Newtype s b, Functor f)
+  :: forall f g t a s b
+   . (Functor f, Functor g, Newtype t a, Newtype s b)
   => (a -> t)
-  -> (f a -> f b)
+  -> (f a -> g b)
   -> f t
-  -> f s
+  -> g s
 overF _ f = map wrap <<< f <<< map unwrap
+
+-- | The opposite of `over`: lowers a function that operates on `Newtype`d
+-- | values to operate on the wrapped value instead.
+-- |
+-- | ``` purescript
+-- | newtype Degrees = Degrees Number
+-- | derive instance newtypeDegrees :: Newtype Degrees _
+-- |
+-- | newtype NormalDegrees = NormalDegrees Number
+-- | derive instance newtypeNormalDegrees :: Newtype NormalDegrees _
+-- |
+-- | normaliseDegrees :: Degrees -> NormalDegrees
+-- | normaliseDegrees (Degrees deg) = NormalDegrees (deg `mod` 360.0)
+-- |
+-- | asNormalDegrees :: Number -> Number
+-- | asNormalDegrees = under Degrees normaliseDegrees
+-- | ```
+-- |
+-- | As with `over` the `Newtype` is polymorphic, as illustrated in the example
+-- | above - both `Degrees` and `NormalDegrees` are instances of `Newtype`,
+-- | so even though `normaliseDegrees` changes the result type we can still put
+-- | a `Number` in and get a `Number` out via `under`.
+under
+  :: forall t a s b
+   . (Newtype t a, Newtype s b)
+  => (a -> t)
+  -> (t -> s)
+  -> a
+  -> b
+under _ f = unwrap <<< f <<< wrap
+
+-- | Much like `under`, but where the lifted function operates on values in a
+-- | `Functor`:
+-- |
+-- | ``` purescript
+-- | newtype EmailAddress = EmailAddress String
+-- | derive instance newtypeEmailAddress :: Newtype EmailAddress _
+-- |
+-- | isValid :: EmailAddress -> Boolean
+-- | isValid x = false -- imagine a slightly less strict predicate here
+-- |
+-- | findValidEmailString :: Array String -> Maybe String
+-- | findValidEmailString = underF EmailAddress (Foldable.find isValid)
+-- | ```
+-- |
+-- | The above example also demonstrates that the functor type is polymorphic
+-- | here too, the input is an `Array` but the result is a `Maybe`.
+underF
+  :: forall f g t a s b
+   . (Functor f, Functor g, Newtype t a, Newtype s b)
+  => (a -> t)
+  -> (f t -> g s)
+  -> f a
+  -> g b
+underF _ f = map unwrap <<< f <<< map wrap
