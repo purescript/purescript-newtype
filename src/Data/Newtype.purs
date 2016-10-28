@@ -17,6 +17,12 @@ import Prelude
 -- | defined as `newtype` rather than `data` declaration (even if the `data`
 -- | structurally fits the rules of a `newtype`), and the use of a wildcard for
 -- | the wrapped type.
+-- |
+-- | Instances must obey the following laws:
+-- | ``` purescript
+-- | unwrap <<< wrap = id
+-- | wrap <<< unwrap = id
+-- | ```
 class Newtype t a | t -> a where
   wrap :: a -> t
   unwrap :: t -> a
