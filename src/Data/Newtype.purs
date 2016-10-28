@@ -17,14 +17,24 @@ import Prelude
 -- | defined as `newtype` rather than `data` declaration (even if the `data`
 -- | structurally fits the rules of a `newtype`), and the use of a wildcard for
 -- | the wrapped type.
+-- |
+-- | Instances must obey the following laws:
+-- | ``` purescript
+-- | unwrap <<< wrap = id
+-- | wrap <<< unwrap = id
+-- | ```
 class Newtype t a | t -> a where
   wrap :: a -> t
   unwrap :: t -> a
 
 -- | Given a constructor for a `Newtype`, this returns the appropriate `unwrap`
 -- | function.
+un :: forall t a. Newtype t a => (a -> t) -> t -> a
+un _ = unwrap
+
+-- | Deprecated previous name of `un`.
 op :: forall t a. Newtype t a => (a -> t) -> t -> a
-op _ = unwrap
+op = un
 
 -- | This combinator is for when you have a higher order function that you want
 -- | to use in the context of some newtype - `foldMap` being a common example:
@@ -78,7 +88,7 @@ alaF _ f = map unwrap <<< f <<< map wrap
 -- | But the result newtype is polymorphic, meaning the result can be returned
 -- | as an alternative newtype:
 -- |
--- | `` purescript
+-- | ``` purescript
 -- | newtype UppercaseLabel = UppercaseLabel String
 -- | derive instance newtypeUppercaseLabel :: Newtype UppercaseLabel _
 -- |
