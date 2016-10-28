@@ -78,7 +78,7 @@ alaF _ f = map unwrap <<< f <<< map wrap
 -- | But the result newtype is polymorphic, meaning the result can be returned
 -- | as an alternative newtype:
 -- |
--- | `` purescript
+-- | ``` purescript
 -- | newtype UppercaseLabel = UppercaseLabel String
 -- | derive instance newtypeUppercaseLabel :: Newtype UppercaseLabel _
 -- |
