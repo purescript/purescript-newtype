@@ -134,7 +134,7 @@ overF _ f = map wrap <<< f <<< map unwrap
 -- | derive instance newtypeNormalDegrees :: Newtype NormalDegrees _
 -- |
 -- | normaliseDegrees :: Degrees -> NormalDegrees
--- | normaliseDegrees (Degrees deg) = NormalDegrees (deg `mod` 360.0)
+-- | normaliseDegrees (Degrees deg) = NormalDegrees (deg % 360.0)
 -- |
 -- | asNormalDegrees :: Number -> Number
 -- | asNormalDegrees = under Degrees normaliseDegrees
