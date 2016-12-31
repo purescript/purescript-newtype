@@ -177,3 +177,25 @@ underF
   -> f a
   -> g b
 underF _ f = map unwrap <<< f <<< map wrap
+
+-- | Similar to the function from the `Traversable` class, but operating within
+-- | a newtype instead.
+traverse
+  :: forall f t a
+   . (Functor f, Newtype t a)
+  => (a -> t)
+  -> (a -> f a)
+  -> t
+  -> f t
+traverse _ f = map wrap <<< f <<< unwrap
+
+-- | Similar to the function from the `Distributive` class, but operating within
+-- | a newtype instead.
+collect
+  :: forall f t a
+   . (Functor f, Newtype t a)
+  => (a -> t)
+  -> (f a -> a)
+  -> f t
+  -> t
+collect _ f = wrap <<< f <<< map unwrap
