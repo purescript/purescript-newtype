@@ -185,7 +185,7 @@ underF _ f = map unwrap <<< f <<< map wrap
 -- | newtype Meter = Meter Int
 -- | derive newtype instance newtypeMeter :: Newtype Meter _
 -- | newtype SquareMeter = SquareMeter Int
--- | derive newtype instance newtypeSquareMeter :: Newtype SquareMeter
+-- | derive newtype instance newtypeSquareMeter :: Newtype SquareMeter _
 -- |
 -- | area :: Meter -> Meter -> SquareMeter
 -- | area = over2 Meter (*)
