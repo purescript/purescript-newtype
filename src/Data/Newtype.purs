@@ -180,13 +180,26 @@ underF
 underF _ f = map unwrap <<< f <<< map wrap
 
 -- | Lifts a binary function to operate over newtypes.
+-- |
+-- | ``` purescript
+-- | newtype Meter = Meter Int
+-- | derive newtype instance newtypeMeter :: Newtype Meter _
+-- | newtype SquareMeter = SquareMeter Int
+-- | derive newtype instance newtypeSquareMeter :: Newtype SquareMeter
+-- |
+-- | area :: Meter -> Meter -> SquareMeter
+-- | area = over2 Meter (*)
+-- | ```
+-- |
+-- | The above example also demonstrates that the return type is polymorphic
+-- | here too.
 over2 :: forall t a s b
        . (Newtype t a, Newtype s b)
       => (a -> t) -> (a -> a -> b) -> t -> t -> s
 over2 _ f = compose wrap <<< f `on` unwrap
 
--- | Much like `over2`, but where the lifted binary function operates on values in a
--- | `Functor`.
+-- | Much like `over2`, but where the lifted binary function operates on
+-- | values in a `Functor`.
 overF2 :: forall f g t a s b
         . (Functor f, Functor g, Newtype t a, Newtype s b)
        => (a -> t) -> (f a -> f a -> g b) -> f t -> f t -> g s
