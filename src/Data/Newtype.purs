@@ -1,6 +1,7 @@
 module Data.Newtype where
 
 import Prelude
+import Data.Function (on)
 
 -- | A type class for `newtype`s to enable convenient wrapping and unwrapping,
 -- | and the use of the other functions in this module.
@@ -177,6 +178,46 @@ underF
   -> f a
   -> g b
 underF _ f = map unwrap <<< f <<< map wrap
+
+-- | Lifts a binary function to operate over newtypes.
+-- |
+-- | ``` purescript
+-- | newtype Meter = Meter Int
+-- | derive newtype instance newtypeMeter :: Newtype Meter _
+-- | newtype SquareMeter = SquareMeter Int
+-- | derive newtype instance newtypeSquareMeter :: Newtype SquareMeter _
+-- |
+-- | area :: Meter -> Meter -> SquareMeter
+-- | area = over2 Meter (*)
+-- | ```
+-- |
+-- | The above example also demonstrates that the return type is polymorphic
+-- | here too.
+over2 :: forall t a s b
+       . (Newtype t a, Newtype s b)
+      => (a -> t) -> (a -> a -> b) -> t -> t -> s
+over2 _ f = compose wrap <<< f `on` unwrap
+
+-- | Much like `over2`, but where the lifted binary function operates on
+-- | values in a `Functor`.
+overF2 :: forall f g t a s b
+        . (Functor f, Functor g, Newtype t a, Newtype s b)
+       => (a -> t) -> (f a -> f a -> g b) -> f t -> f t -> g s
+overF2 _ f = compose (map wrap) <<< f `on` map unwrap
+
+-- | The opposite of `over2`: lowers a binary function that operates on `Newtype`d
+-- | values to operate on the wrapped value instead.
+under2 :: forall t a s b
+        . (Newtype t a, Newtype s b)
+       => (a -> t) -> (t -> t -> s) -> a -> a -> b
+under2 _ f = compose unwrap <<< f `on` wrap
+
+-- | Much like `under2`, but where the lifted binary function operates on
+-- | values in a `Functor`.
+underF2 :: forall f g t a s b
+         . (Functor f, Functor g, Newtype t a, Newtype s b)
+        => (a -> t) -> (f t -> f t -> g s) -> f a -> f a -> g b
+underF2 _ f = compose (map unwrap) <<< f `on` map wrap
 
 -- | Similar to the function from the `Traversable` class, but operating within
 -- | a newtype instead.
