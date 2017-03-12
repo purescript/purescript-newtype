@@ -48,7 +48,9 @@ op = un
 -- | ```
 ala
   :: forall f t a s b
-   . (Functor f, Newtype t a, Newtype s b)
+   . Functor f
+  => Newtype t a
+  => Newtype s b
   => (a -> t)
   -> ((b -> s) -> f t)
   -> f a
@@ -67,7 +69,10 @@ ala _ f = map unwrap (f wrap)
 -- | `Functor`.
 alaF
   :: forall f g t a s b
-   . (Functor f, Functor g, Newtype t a, Newtype s b)
+   . Functor f
+  => Functor g
+  => Newtype t a
+  => Newtype s b
   => (a -> t)
   -> (f t -> g s)
   -> f a
@@ -98,7 +103,8 @@ alaF _ f = map unwrap <<< f <<< map wrap
 -- | ```
 over
   :: forall t a s b
-   . (Newtype t a, Newtype s b)
+   . Newtype t a
+  => Newtype s b
   => (a -> t)
   -> (a -> b)
   -> t
@@ -117,7 +123,10 @@ over _ f = wrap <<< f <<< unwrap
 -- | here too, the input is an `Array` but the result is a `Maybe`.
 overF
   :: forall f g t a s b
-   . (Functor f, Functor g, Newtype t a, Newtype s b)
+   . Functor f
+  => Functor g
+  => Newtype t a
+  => Newtype s b
   => (a -> t)
   -> (f a -> g b)
   -> f t
@@ -147,7 +156,8 @@ overF _ f = map wrap <<< f <<< map unwrap
 -- | a `Number` in and get a `Number` out via `under`.
 under
   :: forall t a s b
-   . (Newtype t a, Newtype s b)
+   . Newtype t a
+  => Newtype s b
   => (a -> t)
   -> (t -> s)
   -> a
@@ -172,7 +182,10 @@ under _ f = unwrap <<< f <<< wrap
 -- | here too, the input is an `Array` but the result is a `Maybe`.
 underF
   :: forall f g t a s b
-   . (Functor f, Functor g, Newtype t a, Newtype s b)
+   . Functor f
+  => Functor g
+  => Newtype t a
+  => Newtype s b
   => (a -> t)
   -> (f t -> g s)
   -> f a
@@ -193,37 +206,66 @@ underF _ f = map unwrap <<< f <<< map wrap
 -- |
 -- | The above example also demonstrates that the return type is polymorphic
 -- | here too.
-over2 :: forall t a s b
-       . (Newtype t a, Newtype s b)
-      => (a -> t) -> (a -> a -> b) -> t -> t -> s
+over2
+  :: forall t a s b
+   . Newtype t a
+  => Newtype s b
+  => (a -> t)
+  -> (a -> a -> b)
+  -> t
+  -> t
+  -> s
 over2 _ f = compose wrap <<< f `on` unwrap
 
 -- | Much like `over2`, but where the lifted binary function operates on
 -- | values in a `Functor`.
-overF2 :: forall f g t a s b
-        . (Functor f, Functor g, Newtype t a, Newtype s b)
-       => (a -> t) -> (f a -> f a -> g b) -> f t -> f t -> g s
+overF2
+  :: forall f g t a s b
+   . Functor f
+  => Functor g
+  => Newtype t a
+  => Newtype s b
+  => (a -> t)
+  -> (f a -> f a -> g b)
+  -> f t
+  -> f t
+  -> g s
 overF2 _ f = compose (map wrap) <<< f `on` map unwrap
 
 -- | The opposite of `over2`: lowers a binary function that operates on `Newtype`d
 -- | values to operate on the wrapped value instead.
-under2 :: forall t a s b
-        . (Newtype t a, Newtype s b)
-       => (a -> t) -> (t -> t -> s) -> a -> a -> b
+under2
+  :: forall t a s b
+   . Newtype t a
+  => Newtype s b
+  => (a -> t)
+  -> (t -> t -> s)
+  -> a
+  -> a
+  -> b
 under2 _ f = compose unwrap <<< f `on` wrap
 
 -- | Much like `under2`, but where the lifted binary function operates on
 -- | values in a `Functor`.
-underF2 :: forall f g t a s b
-         . (Functor f, Functor g, Newtype t a, Newtype s b)
-        => (a -> t) -> (f t -> f t -> g s) -> f a -> f a -> g b
+underF2
+  :: forall f g t a s b
+   . Functor f
+  => Functor g
+  => Newtype t a
+  => Newtype s b
+  => (a -> t)
+  -> (f t -> f t -> g s)
+  -> f a
+  -> f a
+  -> g b
 underF2 _ f = compose (map unwrap) <<< f `on` map wrap
 
 -- | Similar to the function from the `Traversable` class, but operating within
 -- | a newtype instead.
 traverse
   :: forall f t a
-   . (Functor f, Newtype t a)
+   . Functor f
+  => Newtype t a
   => (a -> t)
   -> (a -> f a)
   -> t
@@ -234,7 +276,8 @@ traverse _ f = map wrap <<< f <<< unwrap
 -- | a newtype instead.
 collect
   :: forall f t a
-   . (Functor f, Newtype t a)
+   . Functor f
+  => Newtype t a
   => (a -> t)
   -> (f a -> a)
   -> f t
