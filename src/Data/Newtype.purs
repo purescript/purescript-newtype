@@ -2,6 +2,7 @@ module Data.Newtype where
 
 import Prelude
 import Data.Function (on)
+import Unsafe.Coerce (unsafeCoerce)
 
 -- | A type class for `newtype`s to enable convenient wrapping and unwrapping,
 -- | and the use of the other functions in this module.
@@ -32,6 +33,15 @@ class Newtype t a | t -> a where
 -- | function.
 un :: forall t a. Newtype t a => (a -> t) -> t -> a
 un _ = unwrap
+
+-- | Cheap version of `map unwrap`. Uses `unsafeCoerce` internally.
+unwrapF :: forall f t a. Functor f => Newtype t a => f t -> f a
+unwrapF = unsafeCoerce
+
+-- | Given a constructor for a `Newtype`, this returns the appropriate `unwrapF`
+-- | function.
+unF :: forall f t a. Functor f => Newtype t a => (a -> t) -> f t -> f a
+unF _ = unwrapF
 
 -- | Deprecated previous name of `un`.
 op :: forall t a. Newtype t a => (a -> t) -> t -> a
