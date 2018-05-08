@@ -8,6 +8,7 @@ import Data.Monoid.Conj (Conj(..))
 import Data.Monoid.Disj (Disj(..))
 import Data.Monoid.Dual (Dual(..))
 import Data.Monoid.Endo (Endo(..))
+import Data.Monoid.Multiplicative (Multiplicative(..))
 import Data.Semigroup.First (First(..))
 import Data.Semigroup.Last (Last(..))
 
@@ -39,6 +40,10 @@ class Newtype t a | t -> a where
 instance newtypeAdditive :: Newtype (Additive a) a where
   wrap = Additive
   unwrap (Additive a) = a
+
+instance newtypeMultiplicative :: Newtype (Multiplicative a) a where
+  wrap = Multiplicative
+  unwrap (Multiplicative a) = a
 
 instance newtypeConj :: Newtype (Conj a) a where
   wrap = Conj
