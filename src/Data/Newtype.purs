@@ -1,7 +1,16 @@
 module Data.Newtype where
 
 import Prelude
+
 import Data.Function (on)
+import Data.Monoid.Additive (Additive(..))
+import Data.Monoid.Conj (Conj(..))
+import Data.Monoid.Disj (Disj(..))
+import Data.Monoid.Dual (Dual(..))
+import Data.Monoid.Endo (Endo(..))
+import Data.Monoid.Multiplicative (Multiplicative(..))
+import Data.Semigroup.First (First(..))
+import Data.Semigroup.Last (Last(..))
 
 -- | A type class for `newtype`s to enable convenient wrapping and unwrapping,
 -- | and the use of the other functions in this module.
@@ -27,6 +36,38 @@ import Data.Function (on)
 class Newtype t a | t -> a where
   wrap :: a -> t
   unwrap :: t -> a
+
+instance newtypeAdditive :: Newtype (Additive a) a where
+  wrap = Additive
+  unwrap (Additive a) = a
+
+instance newtypeMultiplicative :: Newtype (Multiplicative a) a where
+  wrap = Multiplicative
+  unwrap (Multiplicative a) = a
+
+instance newtypeConj :: Newtype (Conj a) a where
+  wrap = Conj
+  unwrap (Conj a) = a
+
+instance newtypeDisj :: Newtype (Disj a) a where
+  wrap = Disj
+  unwrap (Disj a) = a
+
+instance newtypeDual :: Newtype (Dual a) a where
+  wrap = Dual
+  unwrap (Dual a) = a
+
+instance newtypeEndo :: Newtype (Endo c a) (c a a) where
+  wrap = Endo
+  unwrap (Endo a) = a
+
+instance newtypeFirst :: Newtype (First a) a where
+  wrap = First
+  unwrap (First a) = a
+
+instance newtypeLast :: Newtype (Last a) a where
+  wrap = Last
+  unwrap (Last a) = a
 
 -- | Given a constructor for a `Newtype`, this returns the appropriate `unwrap`
 -- | function.
