@@ -78,6 +78,11 @@ un _ = unwrap
 op :: forall t a. Newtype t a => (a -> t) -> t -> a
 op = un
 
+-- | This combinator unwraps the newtype, applies a monomorphic function to the 
+-- | contained value and wraps the result back in the newtype
+modify :: forall t a. Newtype t a => (a -> a) -> t -> t
+modify fn = unwrap >>> fn >>> wrap
+
 -- | This combinator is for when you have a higher order function that you want
 -- | to use in the context of some newtype - `foldMap` being a common example:
 -- |
