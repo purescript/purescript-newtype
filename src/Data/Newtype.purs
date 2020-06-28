@@ -2,15 +2,16 @@ module Data.Newtype where
 
 import Prelude
 
-import Data.Function (on)
-import Data.Monoid.Additive (Additive(..))
-import Data.Monoid.Conj (Conj(..))
-import Data.Monoid.Disj (Disj(..))
-import Data.Monoid.Dual (Dual(..))
-import Data.Monoid.Endo (Endo(..))
-import Data.Monoid.Multiplicative (Multiplicative(..))
-import Data.Semigroup.First (First(..))
-import Data.Semigroup.Last (Last(..))
+import Data.Monoid.Additive (Additive)
+import Data.Monoid.Conj (Conj)
+import Data.Monoid.Disj (Disj)
+import Data.Monoid.Dual (Dual)
+import Data.Monoid.Endo (Endo)
+import Data.Monoid.Multiplicative (Multiplicative)
+import Data.Semigroup.First (First)
+import Data.Semigroup.Last (Last)
+import Prim.Coerce (class Coercible)
+import Safe.Coerce (coerce)
 
 -- | A type class for `newtype`s to enable convenient wrapping and unwrapping,
 -- | and the use of the other functions in this module.
@@ -33,41 +34,29 @@ import Data.Semigroup.Last (Last(..))
 -- | unwrap <<< wrap = id
 -- | wrap <<< unwrap = id
 -- | ```
-class Newtype t a | t -> a where
-  wrap :: a -> t
-  unwrap :: t -> a
+class (Coercible t a, Coercible a t) <= Newtype t a | t -> a
 
-instance newtypeAdditive :: Newtype (Additive a) a where
-  wrap = Additive
-  unwrap (Additive a) = a
+wrap :: forall t a. Newtype t a => a -> t
+wrap = coerce
 
-instance newtypeMultiplicative :: Newtype (Multiplicative a) a where
-  wrap = Multiplicative
-  unwrap (Multiplicative a) = a
+unwrap :: forall t a. Newtype t a => t -> a
+unwrap = coerce
 
-instance newtypeConj :: Newtype (Conj a) a where
-  wrap = Conj
-  unwrap (Conj a) = a
+instance newtypeAdditive :: Newtype (Additive a) a
 
-instance newtypeDisj :: Newtype (Disj a) a where
-  wrap = Disj
-  unwrap (Disj a) = a
+instance newtypeMultiplicative :: Newtype (Multiplicative a) a
 
-instance newtypeDual :: Newtype (Dual a) a where
-  wrap = Dual
-  unwrap (Dual a) = a
+instance newtypeConj :: Newtype (Conj a) a
 
-instance newtypeEndo :: Newtype (Endo c a) (c a a) where
-  wrap = Endo
-  unwrap (Endo a) = a
+instance newtypeDisj :: Newtype (Disj a) a
 
-instance newtypeFirst :: Newtype (First a) a where
-  wrap = First
-  unwrap (First a) = a
+instance newtypeDual :: Newtype (Dual a) a
 
-instance newtypeLast :: Newtype (Last a) a where
-  wrap = Last
-  unwrap (Last a) = a
+instance newtypeEndo :: Newtype (Endo c a) (c a a)
+
+instance newtypeFirst :: Newtype (First a) a
+
+instance newtypeLast :: Newtype (Last a) a
 
 -- | Given a constructor for a `Newtype`, this returns the appropriate `unwrap`
 -- | function.
@@ -86,12 +75,13 @@ un _ = unwrap
 ala
   :: forall f t a s b
    . Functor f
+  => Coercible (f t) (f a)
   => Newtype t a
   => Newtype s b
   => (a -> t)
   -> ((b -> s) -> f t)
   -> f a
-ala _ f = map unwrap (f wrap)
+ala _ f = coerce (f wrap)
 
 -- | Similar to `ala` but useful for cases where you want to use an additional
 -- | projection with the higher order function:
@@ -107,14 +97,16 @@ ala _ f = map unwrap (f wrap)
 alaF
   :: forall f g t a s b
    . Functor f
+  => Coercible (f t) (f a)
   => Functor g
+  => Coercible (g s) (g b)
   => Newtype t a
   => Newtype s b
   => (a -> t)
   -> (f t -> g s)
   -> f a
   -> g b
-alaF _ f = map unwrap <<< f <<< map wrap
+alaF _ = coerce
 
 -- | Lifts a function operate over newtypes. This can be used to lift a
 -- | function to manipulate the contents of a single newtype, somewhat like
@@ -146,7 +138,7 @@ over
   -> (a -> b)
   -> t
   -> s
-over _ f = wrap <<< f <<< unwrap
+over _ = coerce
 
 -- | Much like `over`, but where the lifted function operates on values in a
 -- | `Functor`:
@@ -161,14 +153,16 @@ over _ f = wrap <<< f <<< unwrap
 overF
   :: forall f g t a s b
    . Functor f
+  => Coercible (f a) (f t)
   => Functor g
+  => Coercible (g b) (g s)
   => Newtype t a
   => Newtype s b
   => (a -> t)
   -> (f a -> g b)
   -> f t
   -> g s
-overF _ f = map wrap <<< f <<< map unwrap
+overF _ = coerce
 
 -- | The opposite of `over`: lowers a function that operates on `Newtype`d
 -- | values to operate on the wrapped value instead.
@@ -199,7 +193,7 @@ under
   -> (t -> s)
   -> a
   -> b
-under _ f = unwrap <<< f <<< wrap
+under _ = coerce
 
 -- | Much like `under`, but where the lifted function operates on values in a
 -- | `Functor`:
@@ -220,14 +214,16 @@ under _ f = unwrap <<< f <<< wrap
 underF
   :: forall f g t a s b
    . Functor f
+  => Coercible (f t) (f a)
   => Functor g
+  => Coercible (g s) (g b)
   => Newtype t a
   => Newtype s b
   => (a -> t)
   -> (f t -> g s)
   -> f a
   -> g b
-underF _ f = map unwrap <<< f <<< map wrap
+underF _ = coerce
 
 -- | Lifts a binary function to operate over newtypes.
 -- |
@@ -252,14 +248,16 @@ over2
   -> t
   -> t
   -> s
-over2 _ f = compose wrap <<< f `on` unwrap
+over2 _ = coerce
 
 -- | Much like `over2`, but where the lifted binary function operates on
 -- | values in a `Functor`.
 overF2
   :: forall f g t a s b
    . Functor f
+  => Coercible (f a) (f t)
   => Functor g
+  => Coercible (g b) (g s)
   => Newtype t a
   => Newtype s b
   => (a -> t)
@@ -267,7 +265,7 @@ overF2
   -> f t
   -> f t
   -> g s
-overF2 _ f = compose (map wrap) <<< f `on` map unwrap
+overF2 _ = coerce
 
 -- | The opposite of `over2`: lowers a binary function that operates on `Newtype`d
 -- | values to operate on the wrapped value instead.
@@ -280,14 +278,16 @@ under2
   -> a
   -> a
   -> b
-under2 _ f = compose unwrap <<< f `on` wrap
+under2 _ = coerce
 
 -- | Much like `under2`, but where the lifted binary function operates on
 -- | values in a `Functor`.
 underF2
   :: forall f g t a s b
    . Functor f
+  => Coercible (f t) (f a)
   => Functor g
+  => Coercible (g s) (g b)
   => Newtype t a
   => Newtype s b
   => (a -> t)
@@ -295,28 +295,30 @@ underF2
   -> f a
   -> f a
   -> g b
-underF2 _ f = compose (map unwrap) <<< f `on` map wrap
+underF2 _ = coerce
 
 -- | Similar to the function from the `Traversable` class, but operating within
 -- | a newtype instead.
 traverse
   :: forall f t a
    . Functor f
+  => Coercible (f a) (f t)
   => Newtype t a
   => (a -> t)
   -> (a -> f a)
   -> t
   -> f t
-traverse _ f = map wrap <<< f <<< unwrap
+traverse _ = coerce
 
 -- | Similar to the function from the `Distributive` class, but operating within
 -- | a newtype instead.
 collect
   :: forall f t a
    . Functor f
+  => Coercible (f a) (f t)
   => Newtype t a
   => (a -> t)
   -> (f a -> a)
   -> f t
   -> t
-collect _ f = wrap <<< f <<< map unwrap
+collect _ = coerce

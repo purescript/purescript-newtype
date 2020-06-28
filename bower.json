@@ -17,6 +17,7 @@
     "package.json"
   ],
   "dependencies": {
-    "purescript-prelude": "master"
+    "purescript-prelude": "master",
+    "purescript-safe-coerce": "master"
   }
 }
