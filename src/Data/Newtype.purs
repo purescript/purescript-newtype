@@ -74,10 +74,6 @@ instance newtypeLast :: Newtype (Last a) a where
 un :: forall t a. Newtype t a => (a -> t) -> t -> a
 un _ = unwrap
 
--- | Deprecated previous name of `un`.
-op :: forall t a. Newtype t a => (a -> t) -> t -> a
-op = un
-
 -- | This combinator is for when you have a higher order function that you want
 -- | to use in the context of some newtype - `foldMap` being a common example:
 -- |
