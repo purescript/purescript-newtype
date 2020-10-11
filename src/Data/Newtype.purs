@@ -2,14 +2,15 @@ module Data.Newtype where
 
 import Prelude
 
-import Data.Monoid.Additive (Additive)
-import Data.Monoid.Conj (Conj)
-import Data.Monoid.Disj (Disj)
-import Data.Monoid.Dual (Dual)
-import Data.Monoid.Endo (Endo)
-import Data.Monoid.Multiplicative (Multiplicative)
-import Data.Semigroup.First (First)
-import Data.Semigroup.Last (Last)
+import Data.Function (on)
+import Data.Monoid.Additive (Additive(..))
+import Data.Monoid.Conj (Conj(..))
+import Data.Monoid.Disj (Disj(..))
+import Data.Monoid.Dual (Dual(..))
+import Data.Monoid.Endo (Endo(..))
+import Data.Monoid.Multiplicative (Multiplicative(..))
+import Data.Semigroup.First (First(..))
+import Data.Semigroup.Last (Last(..))
 import Prim.Coerce (class Coercible)
 import Safe.Coerce (coerce)
 
@@ -34,29 +35,41 @@ import Safe.Coerce (coerce)
 -- | unwrap <<< wrap = id
 -- | wrap <<< unwrap = id
 -- | ```
-class (Coercible t a, Coercible a t) <= Newtype t a | t -> a
+class Newtype t a | t -> a where
+  wrap :: a -> t
+  unwrap :: t -> a
 
-wrap :: forall t a. Newtype t a => a -> t
-wrap = coerce
+instance newtypeAdditive :: Newtype (Additive a) a where
+  wrap = Additive
+  unwrap (Additive a) = a
 
-unwrap :: forall t a. Newtype t a => t -> a
-unwrap = coerce
+instance newtypeMultiplicative :: Newtype (Multiplicative a) a where
+  wrap = Multiplicative
+  unwrap (Multiplicative a) = a
 
-instance newtypeAdditive :: Newtype (Additive a) a
+instance newtypeConj :: Newtype (Conj a) a where
+  wrap = Conj
+  unwrap (Conj a) = a
 
-instance newtypeMultiplicative :: Newtype (Multiplicative a) a
+instance newtypeDisj :: Newtype (Disj a) a where
+  wrap = Disj
+  unwrap (Disj a) = a
 
-instance newtypeConj :: Newtype (Conj a) a
+instance newtypeDual :: Newtype (Dual a) a where
+  wrap = Dual
+  unwrap (Dual a) = a
 
-instance newtypeDisj :: Newtype (Disj a) a
+instance newtypeEndo :: Newtype (Endo c a) (c a a) where
+  wrap = Endo
+  unwrap (Endo a) = a
 
-instance newtypeDual :: Newtype (Dual a) a
+instance newtypeFirst :: Newtype (First a) a where
+  wrap = First
+  unwrap (First a) = a
 
-instance newtypeEndo :: Newtype (Endo c a) (c a a)
-
-instance newtypeFirst :: Newtype (First a) a
-
-instance newtypeLast :: Newtype (Last a) a
+instance newtypeLast :: Newtype (Last a) a where
+  wrap = Last
+  unwrap (Last a) = a
 
 -- | Given a constructor for a `Newtype`, this returns the appropriate `unwrap`
 -- | function.
