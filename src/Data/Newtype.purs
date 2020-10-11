@@ -145,7 +145,9 @@ alaF _ = coerce
 -- | ```
 over
   :: forall t a s b
-   . Newtype t a
+   . Coercible a t
+  => Coercible b s
+  => Newtype t a
   => Newtype s b
   => (a -> t)
   -> (a -> b)
@@ -200,7 +202,9 @@ overF _ = coerce
 -- | a `Number` in and get a `Number` out via `under`.
 under
   :: forall t a s b
-   . Newtype t a
+   . Coercible t a
+  => Coercible s b
+  => Newtype t a
   => Newtype s b
   => (a -> t)
   -> (t -> s)
@@ -254,7 +258,9 @@ underF _ = coerce
 -- | here too.
 over2
   :: forall t a s b
-   . Newtype t a
+   . Coercible a t
+  => Coercible b s
+  => Newtype t a
   => Newtype s b
   => (a -> t)
   -> (a -> a -> b)
@@ -284,7 +290,9 @@ overF2 _ = coerce
 -- | values to operate on the wrapped value instead.
 under2
   :: forall t a s b
-   . Newtype t a
+   . Coercible t a
+  => Coercible s b
+  => Newtype t a
   => Newtype s b
   => (a -> t)
   -> (t -> t -> s)
@@ -316,6 +324,8 @@ traverse
   :: forall f t a
    . Functor f
   => Coercible (f a) (f t)
+  => Coercible t a
+  => Coercible a t
   => Newtype t a
   => (a -> t)
   -> (a -> f a)
@@ -328,6 +338,7 @@ traverse _ = coerce
 collect
   :: forall f t a
    . Functor f
+  => Coercible a t
   => Coercible (f a) (f t)
   => Newtype t a
   => (a -> t)
