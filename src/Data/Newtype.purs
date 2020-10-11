@@ -33,6 +33,7 @@ import Data.Semigroup.Last (Last(..))
 -- | unwrap <<< wrap = id
 -- | wrap <<< unwrap = id
 -- | ```
+class Newtype :: Type -> Type -> Constraint
 class Newtype t a | t -> a where
   wrap :: a -> t
   unwrap :: t -> a
