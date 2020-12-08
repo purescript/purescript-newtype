@@ -2,6 +2,7 @@
 
 [![Latest release](http://img.shields.io/github/release/purescript/purescript-newtype.svg)](https://github.com/purescript/purescript-newtype/releases)
 [![Build status](https://github.com/purescript/purescript-newtype/workflows/CI/badge.svg?branch=master)](https://github.com/purescript/purescript-newtype/actions?query=workflow%3ACI+branch%3Amaster)
+[![Pursuit](https://pursuit.purescript.org/packages/purescript-newtype/badge)](https://pursuit.purescript.org/packages/purescript-newtype)
 
 Type class and functions for working with `newtype`s.
 
