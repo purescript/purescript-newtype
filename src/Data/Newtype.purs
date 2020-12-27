@@ -1,7 +1,5 @@
 module Data.Newtype where
 
-import Prelude
-
 import Data.Monoid.Additive (Additive(..))
 import Data.Monoid.Conj (Conj(..))
 import Data.Monoid.Disj (Disj(..))
