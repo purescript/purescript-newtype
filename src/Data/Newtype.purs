@@ -2,14 +2,14 @@ module Data.Newtype where
 
 import Prelude
 
-import Data.Monoid.Additive (Additive)
-import Data.Monoid.Conj (Conj)
-import Data.Monoid.Disj (Disj)
-import Data.Monoid.Dual (Dual)
-import Data.Monoid.Endo (Endo)
-import Data.Monoid.Multiplicative (Multiplicative)
-import Data.Semigroup.First (First)
-import Data.Semigroup.Last (Last)
+import Data.Monoid.Additive (Additive(..))
+import Data.Monoid.Conj (Conj(..))
+import Data.Monoid.Disj (Disj(..))
+import Data.Monoid.Dual (Dual(..))
+import Data.Monoid.Endo (Endo(..))
+import Data.Monoid.Multiplicative (Multiplicative(..))
+import Data.Semigroup.First (First(..))
+import Data.Semigroup.Last (Last(..))
 import Safe.Coerce (class Coercible, coerce)
 
 -- | A type class for `newtype`s to enable convenient wrapping and unwrapping,
