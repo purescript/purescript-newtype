@@ -5,6 +5,16 @@ Notable changes to this project are documented in this file. The format is based
 ## [Unreleased]
 
 Breaking changes:
+
+New features:
+
+Bugfixes:
+
+Other improvements:
+
+## [v4.0.0](https://github.com/purescript/purescript-newtype/releases/tag/v4.0.0) - 2021-02-26
+
+Breaking changes:
 - Added support for PureScript 0.14 and dropped support for all previous versions (#24)
 - Removed `op`, which was deprecated in v1.1.0 in favor of `un` (#24)
 - Replaced explicit wrapping and unwrapping of newtypes by coercions (#22)
