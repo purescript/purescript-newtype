@@ -1,5 +1,6 @@
 module Data.Newtype where
 
+import Data.Functor (class Functor)
 import Data.Monoid.Additive (Additive(..))
 import Data.Monoid.Conj (Conj(..))
 import Data.Monoid.Disj (Disj(..))
@@ -55,6 +56,15 @@ instance newtypeLast :: Newtype (Last a) a
 -- | function.
 un :: forall t a. Newtype t a => (a -> t) -> t -> a
 un _ = unwrap
+
+-- | Cheap version of `map unwrap`.
+unwrapF :: forall f t a. Functor f => Newtype t a => f t -> f a
+unwrapF = coerce
+
+-- | Given a constructor for a `Newtype`, this returns the appropriate `unwrapF`
+-- | function.
+unF :: forall f t a. Functor f => Newtype t a => (a -> t) -> f t -> f a
+unF _ = unwrapF
 
 -- | This combinator is for when you have a higher order function that you want
 -- | to use in the context of some newtype - `foldMap` being a common example:
