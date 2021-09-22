@@ -1,5 +1,6 @@
 module Data.Newtype where
 
+import Data.Functor (class Functor)
 import Data.Monoid.Additive (Additive(..))
 import Data.Monoid.Conj (Conj(..))
 import Data.Monoid.Disj (Disj(..))
