@@ -56,6 +56,11 @@ instance newtypeLast :: Newtype (Last a) a
 un :: forall t a. Newtype t a => (a -> t) -> t -> a
 un _ = unwrap
 
+-- | This combinator unwraps the newtype, applies a monomorphic function to the 
+-- | contained value and wraps the result back in the newtype
+modify :: forall t a. Newtype t a => (a -> a) -> t -> t
+modify fn t = wrap (fn (unwrap t))
+
 -- | This combinator is for when you have a higher order function that you want
 -- | to use in the context of some newtype - `foldMap` being a common example:
 -- |
