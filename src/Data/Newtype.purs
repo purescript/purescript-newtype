@@ -25,7 +25,6 @@ import Safe.Coerce (class Coercible, coerce)
 -- | defined as `newtype` rather than `data` declaration (even if the `data`
 -- | structurally fits the rules of a `newtype`), and the use of a wildcard for
 -- | the wrapped type.
--- | ```
 class Newtype :: Type -> Type -> Constraint
 class Coercible t a <= Newtype t a | t -> a
 
