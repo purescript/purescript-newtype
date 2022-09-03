@@ -219,9 +219,9 @@ underF _ = coerce
 -- |
 -- | ``` purescript
 -- | newtype Meter = Meter Int
--- | derive newtype instance newtypeMeter :: Newtype Meter _
+-- | derive instance newtypeMeter :: Newtype Meter _
 -- | newtype SquareMeter = SquareMeter Int
--- | derive newtype instance newtypeSquareMeter :: Newtype SquareMeter _
+-- | derive instance newtypeSquareMeter :: Newtype SquareMeter _
 -- |
 -- | area :: Meter -> Meter -> SquareMeter
 -- | area = over2 Meter (*)
