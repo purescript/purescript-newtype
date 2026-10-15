@@ -12,7 +12,7 @@ Bugfixes:
 
 Other improvements:
 
-- Migrate from Bower/Pulp to Spago and update CI and formatting tools.
+- Migrate from Bower/Pulp to Spago and update CI and formatting tools (#34 by @thomashoneyman)
 - Remove incorrect newtype deriving from `over2` docs (#33 by @ptrfrncsmrph)
 
 ## [v5.0.0](https://github.com/purescript/purescript-newtype/releases/tag/v5.0.0) - 2022-04-27
