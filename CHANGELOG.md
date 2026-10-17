@@ -2,7 +2,7 @@
 
 Notable changes to this project are documented in this file. The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [Unreleased](https://github.com/purescript/purescript-newtype/compare/v5.0.1...HEAD)
 
 Breaking changes:
 
@@ -11,14 +11,28 @@ New features:
 Bugfixes:
 
 Other improvements:
+
+## [v5.0.1](https://github.com/purescript/purescript-newtype/releases/tag/v5.0.1) - 2026-10-17
+
+Breaking changes:
+
+New features:
+
+Bugfixes:
+
+Other improvements:
+
+- Migrate from Bower/Pulp to Spago and update CI and formatting tools (#34 by @thomashoneyman)
 - Remove incorrect newtype deriving from `over2` docs (#33 by @ptrfrncsmrph)
 
 ## [v5.0.0](https://github.com/purescript/purescript-newtype/releases/tag/v5.0.0) - 2022-04-27
 
 Breaking changes:
+
 - Update project and deps to PureScript v0.15.0 (#30 by @JordanMartinez)
 
 New features:
+
 - Added `modify` (#19 by @dwhitney)
 
 Bugfixes:
@@ -28,6 +42,7 @@ Other improvements:
 ## [v4.0.0](https://github.com/purescript/purescript-newtype/releases/tag/v4.0.0) - 2021-02-26
 
 Breaking changes:
+
 - Added support for PureScript 0.14 and dropped support for all previous versions (#24)
 - Removed `op`, which was deprecated in v1.1.0 in favor of `un` (#24)
 - Replaced explicit wrapping and unwrapping of newtypes by coercions (#22)
@@ -39,6 +54,7 @@ New features:
 Bugfixes:
 
 Other improvements:
+
 - Migrated CI to GitHub Actions and updated installation instructions to use Spago (#25)
 - Added a changelog and pull request template (#26)
 

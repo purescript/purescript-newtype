@@ -1,0 +1,16 @@
+package:
+  name: newtype
+  description: Type class and functions for working with newtypes
+  build:
+    strict: true
+    pedanticPackages: true
+  publish:
+    version: 5.0.1
+    license: BSD-3-Clause
+    location:
+      githubOwner: purescript
+      githubRepo: purescript-newtype
+  dependencies:
+    - prelude: ">=6.0.0 <7.0.0"
+    - safe-coerce: ">=2.0.0 <3.0.0"
+workspace: {}
